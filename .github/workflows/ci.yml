@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  workflow_call:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install shell tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes shellcheck
+
+      - name: Run complete validation suite
+        run: make test package
+
+      - name: Scan source
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln,secret,misconfig
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
+
+      - name: Resolve pinned Codex source
+        id: codex
+        run: |
+          echo "commit=$(jq -r '.dependencies.codex.sourceCommit' config/dependencies.json)" \
+            >> "$GITHUB_OUTPUT"
+
+      - name: Checkout pinned Codex source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: openai/codex
+          ref: ${{ steps.codex.outputs.commit }}
+          path: upstream-codex
+          persist-credentials: false
+          sparse-checkout: codex-rs/Cargo.lock
+          sparse-checkout-cone-mode: false
+
+      - name: Install Cargo Audit
+        uses: taiki-e/install-action@b6b84cf49ebfe0176417bdce007c624f0db37f20 # v2.86.2
+        with:
+          tool: cargo-audit@0.22.2
+
+      - name: Audit pinned Codex Rust dependencies
+        # Report-only: the pinned Codex lockfile carries open advisories that
+        # only an upstream release can fix. See
+        # SECURITY.md#upstream-codex-dependencies.
+        continue-on-error: true
+        run: |
+          mkdir -p build
+          cargo audit --json --file upstream-codex/codex-rs/Cargo.lock \
+            > build/codex-cargo-audit.json || true
+          cargo audit --file upstream-codex/codex-rs/Cargo.lock
+
+      - name: Upload validation artifacts
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: codex-supply-buildpack-validation
+          path: |
+            build/*.zip
+            build/*.cdx.json
+            build/codex-cargo-audit.json
+          if-no-files-found: warn
+          retention-days: 7

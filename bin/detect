@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# A supply-only buildpack is never auto-detected: name it explicitly in the
+# application's `buildpacks:` list, before the final buildpack. Cloud Foundry
+# does not run detect for buildpacks named that way.
+
+exit 1

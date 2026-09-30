@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Cloud Foundry v2 supply lifecycle: installs checksum-verified codex-acp, the
+# Node.js it runs on and the native codex it drives, and exports
+# CODEX_ACP_CLI_PATH and CODEX_PATH. Configuring Codex (provider, model, MCP
+# servers, skills, config.toml) is the application's job, through Spring AI ACP.
+
+set -euo pipefail
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+DEPS_DIR=$3
+INDEX=$4
+BP_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
+DEPS_INDEX_DIR="${DEPS_DIR}/${INDEX}"
+
+source "${BP_DIR}/lib/installer.sh"
+source "${BP_DIR}/lib/environment.sh"
+
+echo "-----> Codex Supply Buildpack $(tr -d '[:space:]' < "${BP_DIR}/VERSION")"
+
+for command in curl tar gzip; do
+    command -v "${command}" >/dev/null 2>&1 || {
+        echo "       ERROR: ${command} is required but not installed" >&2
+        exit 1
+    }
+done
+
+mkdir -p "${DEPS_INDEX_DIR}/bin" "${CACHE_DIR}"
+
+echo "       Installing verified jq"
+install_jq "${DEPS_INDEX_DIR}" "${BP_DIR}" "${CACHE_DIR}"
+
+echo "       Installing Node.js"
+install_node "${DEPS_INDEX_DIR}" "${CACHE_DIR}" "${BP_DIR}"
+
+echo "       Installing Codex"
+install_codex "${DEPS_INDEX_DIR}" "${CACHE_DIR}" "${BP_DIR}"
+
+echo "       Installing codex-acp"
+install_codex_acp "${DEPS_INDEX_DIR}" "${CACHE_DIR}" "${BP_DIR}"
+
+setup_environment "${DEPS_INDEX_DIR}" "${BUILD_DIR}" "${INDEX}"
+create_config_file "${DEPS_INDEX_DIR}" "${BP_DIR}"
+verify_installation "${DEPS_INDEX_DIR}"
+
+echo "       Codex supply complete: $(get_codex_acp_version "${DEPS_INDEX_DIR}")"
