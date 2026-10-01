@@ -2,8 +2,9 @@
 
 A Cloud Foundry v2 **supply buildpack** that puts a checksum-verified
 [codex-acp](https://github.com/agentclientprotocol/codex-acp) and
-[Codex](https://github.com/openai/codex) in the droplet, and exports
-`CODEX_ACP_CLI_PATH` and `CODEX_PATH`. That is everything it does.
+[Codex](https://github.com/openai/codex), with Codex's code-mode host, in the
+droplet, and exports `CODEX_ACP_CLI_PATH` and `CODEX_PATH`. That is everything
+it does.
 
 It is for applications built on [Spring AI ACP](https://github.com/cpage-pivotal/acp-spring),
 such as `spring-ai-acp-chat`. Codex has no ACP mode of its own. Spring AI ACP's
@@ -16,7 +17,7 @@ therefore writes no Codex configuration and reads no service bindings.
 
 - Buildpack: **1.0.0**
 - codex-acp: **2.0.1**
-- Codex: **0.159.1**
+- Codex: **0.159.1**, and its code-mode host from the same release
 - Node.js: **24.21.0** (LTS, runs codex-acp)
 - Architectures: Linux amd64 and arm64
 
@@ -58,7 +59,8 @@ spring:
 
 1. Installs jq, pinned by SHA-256 in `lib/installer.sh`, to read the dependency
    manifest.
-2. Installs Node.js, codex and codex-acp for the container's architecture from
+2. Installs Node.js, codex, its code-mode host and codex-acp for the
+   container's architecture from
    `config/dependencies.json`. Every download is HTTPS only and SHA-256
    verified, and no archive may contain absolute or `..` paths.
    - **Node.js:** only `bin/node` and its licence are taken from the release,
@@ -66,6 +68,10 @@ spring:
      a Node.js the application or another buildpack supplies.
    - **Codex:** the archive must hold exactly one `codex-<triple>` binary,
      which is installed as `bin/codex`.
+   - **Code-mode host:** the archive must hold exactly one
+     `codex-code-mode-host-<triple>` binary, which is installed as
+     `bin/codex-code-mode-host`, where Codex looks for it. It must be the same
+     version as Codex.
    - **codex-acp:** only `package/dist/index.js`, a single self-contained
      script, and its licence are taken from the npm package. `bin/codex-acp`
      runs it on the pinned Node.js. `CODEX_PATH` defaults to the `codex` beside
@@ -77,7 +83,18 @@ Archives are taken from the buildpack's own `dependencies/` directory (the
 cached release), then the staging cache, then downloaded.
 
 The pinned Codex assets are upstream's static musl builds, which suit
-cflinuxfs4. They add about 280 MB to the droplet, and Node.js about 120 MB.
+cflinuxfs4. They add about 280 MB to the droplet, the code-mode host about
+75 MB, and Node.js about 120 MB.
+
+### Code mode
+
+Codex's current models (all but `gpt-5.5` in Codex 0.159.1's catalog) call
+every tool, MCP servers included, from JavaScript run by
+`codex-code-mode-host`, a separate binary in Codex's release. Codex looks for
+it beside its own executable. Without it those models are left with no tools
+at all: Codex warns "Code Mode is unavailable ... Code mode will fail closed",
+and the agent answers as if its MCP servers were down. That is why the host is
+installed, not optional.
 
 ### Sandboxing
 
@@ -100,7 +117,10 @@ env:
 ```
 
 `CODEX_ACP_VERSION`, `CODEX_ACP_DOWNLOAD_URL` and `CODEX_ACP_SHA256` do the
-same for codex-acp's npm tarball. An override applies only when its `_VERSION`
+same for codex-acp's npm tarball. The code-mode host must match Codex, so a
+Codex override needs `CODEX_CODE_MODE_HOST_VERSION`,
+`CODEX_CODE_MODE_HOST_DOWNLOAD_URL` and `CODEX_CODE_MODE_HOST_SHA256` for the
+same release; staging fails if the two versions differ. An override applies only when its `_VERSION`
 (ignoring a leading `v`) differs from the pinned version. If it matches, the
 pinned asset is installed and the other two variables are ignored. codex-acp
 drives Codex over its app-server protocol, so keep the two compatible. Each
@@ -109,7 +129,7 @@ codex-acp release names the `@openai/codex` it was built against.
 ## Releases
 
 Pushing a `v*` tag builds an offline (cached) buildpack per architecture with
-all four dependencies bundled, plus a CycloneDX SBOM and checksums:
+all five dependencies bundled, plus a CycloneDX SBOM and checksums:
 
 ```bash
 cf create-buildpack codex_supply_buildpack codex_supply_buildpack-cached-v1.0.0-amd64.zip 99
@@ -131,6 +151,9 @@ codex-acp and Codex move together:
 3. Pin a Codex release that satisfies it. `make dependencies` fails if the
    pinned Codex falls outside the range, and `make freshness` fails if
    `codexRange` differs from what npm publishes.
+4. Pin `codex-code-mode-host` to the same release: the same `version`,
+   `sourceCommit` and tag in `purl`, and its own assets' URLs and SHA-256s.
+   `make dependencies` fails if it differs from Codex.
 
 For each dependency, update `version`, `sourceCommit`, `purl`, and both
 assets' URL and SHA-256. Also update the versions in this README and
@@ -138,7 +161,7 @@ SECURITY.md. Where to get the SHA-256s:
 
 | Dependency | Source |
 | --- | --- |
-| Codex | the release's asset digests (`gh release view rust-vX.Y.Z --repo openai/codex --json assets`) |
+| Codex and its code-mode host | the release's asset digests (`gh release view rust-vX.Y.Z --repo openai/codex --json assets`) |
 | Node.js | `https://nodejs.org/dist/vX.Y.Z/SHASUMS256.txt` |
 | codex-acp | the downloaded tarball |
 

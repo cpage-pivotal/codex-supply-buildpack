@@ -57,6 +57,26 @@
         }
       }
     },
+    "codex-code-mode-host": {
+      "version": "0.159.1",
+      "failOnUpdate": false,
+      "license": "Apache-2.0",
+      "purl": "pkg:github/openai/codex@rust-v0.159.1#codex-rs/code-mode-host",
+      "source": "https://github.com/openai/codex",
+      "sourceCommit": "8e68a98ef03cdde76d2e6800791ebdf1b3b95b24",
+      "assets": {
+        "amd64": {
+          "filename": "codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz",
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.1/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz",
+          "sha256": "3b8644bdb39dbeed1ab55293672dd0fce1f3b8fbdd9175308d7468b4af0d54bc"
+        },
+        "arm64": {
+          "filename": "codex-code-mode-host-aarch64-unknown-linux-musl.tar.gz",
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.1/codex-code-mode-host-aarch64-unknown-linux-musl.tar.gz",
+          "sha256": "aa96b7ecdc69e6889e9a74565f5344b68783c83da4fcc3dc9daaac28fd8e9b08"
+        }
+      }
+    },
     "node": {
       "version": "24.21.0",
       "failOnUpdate": true,

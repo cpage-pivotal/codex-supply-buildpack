@@ -38,6 +38,8 @@ report() {
 }
 
 # Dependency, GitHub repository, and the prefix its release tags carry.
+# codex-code-mode-host is not listed: it ships in codex's release, and
+# check-dependencies.sh holds it to codex's version and source commit.
 releases=$(cat <<'EOF'
 codex-acp	agentclientprotocol/codex-acp	v
 codex	openai/codex	rust-v

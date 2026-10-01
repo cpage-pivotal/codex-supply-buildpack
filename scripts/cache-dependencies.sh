@@ -17,7 +17,7 @@ esac
 source "${repo_dir}/lib/installer.sh"
 mkdir -p "${destination}"
 
-for dependency in codex codex-acp node jq; do
+for dependency in codex codex-code-mode-host codex-acp node jq; do
   filename=$(dependency_value "${manifest}" "${dependency}" "${arch}" filename)
   url=$(dependency_value "${manifest}" "${dependency}" "${arch}" url)
   expected=$(dependency_value "${manifest}" "${dependency}" "${arch}" sha256)

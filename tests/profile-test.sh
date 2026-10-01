@@ -40,6 +40,8 @@ assert_file_contains "${config}" \
   "codex_version: $(jq -r '.dependencies.codex.version' "${manifest}")"
 assert_file_contains "${config}" "cli_path: ${deps_root}/${index}/bin/codex-acp"
 assert_file_contains "${config}" "codex_path: ${deps_root}/${index}/bin/codex"
+assert_file_contains "${config}" \
+  "code_mode_host_path: ${deps_root}/${index}/bin/codex-code-mode-host"
 
 if "${repo_dir}/bin/detect" "${build_dir}"; then
   fail "a supply-only buildpack must not auto-detect"

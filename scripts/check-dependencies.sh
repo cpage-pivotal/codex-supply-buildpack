@@ -6,7 +6,7 @@ manifest="${repo_dir}/config/dependencies.json"
 
 jq -e '
   .schemaVersion == 1
-  and (.dependencies | keys == ["codex", "codex-acp", "jq", "node"])
+  and (.dependencies | keys == ["codex", "codex-acp", "codex-code-mode-host", "jq", "node"])
   and all(.dependencies[];
     (.version | type == "string" and length > 0)
     and (.failOnUpdate | type == "boolean")
@@ -22,6 +22,9 @@ jq -e '
   )
   and (.dependencies.codex | has("sourceCommit"))
   and (.dependencies["codex-acp"] | has("sourceCommit"))
+  # Built from the same Codex release as codex.
+  and (.dependencies["codex-code-mode-host"].version == .dependencies.codex.version)
+  and (.dependencies["codex-code-mode-host"].sourceCommit == .dependencies.codex.sourceCommit)
   and (.dependencies["codex-acp"].codexRange | test("^\\^[0-9]+\\.[0-9]+\\.[0-9]+$"))
   and (.dependencies.codex.security.minimumSecureVersion
     | test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))
