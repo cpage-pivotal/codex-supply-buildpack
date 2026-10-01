@@ -8,7 +8,7 @@ dependency versions it pins.
 | Component | Supported |
 | --- | --- |
 | Buildpack 1.0.x | Yes |
-| codex-acp 2.0.x, Codex 0.159.x and Node.js 24.x bundled here | Yes |
+| codex-acp 2.0.x, Codex 0.159.x (with its code-mode host) and Node.js 24.x bundled here | Yes |
 | Earlier versions | No |
 
 ## Reporting a vulnerability
@@ -32,6 +32,8 @@ issue is in this buildpack or upstream (codex-acp, Codex or Node.js).
 - Archives are refused if they contain absolute or parent-directory paths.
   Staging extracts only named members:
   - the single `codex-<triple>` binary from Codex's archive
+  - the single `codex-code-mode-host-<triple>` binary from its archive, which
+    must come from the same Codex release as `codex`
   - `bin/node` and `LICENSE` from Node.js
   - `package/dist/index.js` and `package/LICENSE` from codex-acp
 - Node.js stays off `PATH`. Only the `codex-acp` wrapper runs it.
@@ -46,7 +48,7 @@ issue is in this buildpack or upstream (codex-acp, Codex or Node.js).
 CI audits `codex-rs/Cargo.lock` at the pinned Codex source commit with
 `cargo audit` and uploads the JSON report, but a finding does not fail the
 build. The lockfile covers the whole Codex workspace, not just the `codex`
-binary. At Codex 0.159.1, OSV reported open advisories against 19 of its
+and `codex-code-mode-host` binaries. At Codex 0.159.1, OSV reported open advisories against 19 of its
 1,297 crates, among them `openssl` 0.10.75, `gix` 0.81.0, `hickory-proto`
 0.25.2 and `quick-xml` 0.39.4. It flagged 6 more crates as unmaintained.
 Only an upstream release can fix these, and a reviewed ignore list of that size

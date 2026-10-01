@@ -302,6 +302,49 @@ install_codex() {
     echo "       Installed $("${install_dir}/bin/codex" --version)"
 }
 
+# The standalone host that runs Codex's code mode. Codex looks for it beside its
+# own executable, and the current models reach every tool, MCP servers included,
+# only through code mode: without the host they get no tools at all. It is
+# built from the same release as codex, so the two must be the same version.
+install_codex_code_mode_host() {
+    local install_dir=$1
+    local cache_dir=$2
+    local bp_dir=$3
+    local arch members member codex_version
+
+    arch=$(host_architecture) || return 1
+    fetch_verified codex-code-mode-host "${arch}" "${cache_dir}" "${bp_dir}" \
+        CODEX_CODE_MODE_HOST || return 1
+
+    codex_version=${CODEX_RESOLVED_VERSION:-$(dependency_version \
+        "${bp_dir}/config/dependencies.json" codex)} || return 1
+    if [ "${FETCHED_VERSION}" != "${codex_version}" ]; then
+        echo "       ERROR: codex-code-mode-host ${FETCHED_VERSION} does not match Codex ${codex_version}" >&2
+        echo "       Set CODEX_CODE_MODE_HOST_VERSION, _DOWNLOAD_URL and _SHA256 alongside CODEX_*" >&2
+        return 1
+    fi
+
+    if ! members=$(archive_members "${FETCHED_ARCHIVE}") \
+        || ! member=$(awk 'NR == 1 && /^codex-code-mode-host-[a-z0-9_]+-unknown-linux-musl$/ { m = $0 }
+            END { if (NR == 1 && m != "") print m; exit !(NR == 1 && m != "") }' \
+            <<< "${members}"); then
+        echo "       ERROR: codex-code-mode-host archive has unexpected or unsafe contents" >&2
+        return 1
+    fi
+
+    mkdir -p "${install_dir}/bin"
+    tar xzf "${FETCHED_ARCHIVE}" -C "${install_dir}/bin" "${member}"
+    mv -f "${install_dir}/bin/${member}" "${install_dir}/bin/codex-code-mode-host"
+    chmod 0755 "${install_dir}/bin/codex-code-mode-host"
+
+    # It has no --version; --help proves it runs on this stack.
+    if ! "${install_dir}/bin/codex-code-mode-host" --help >/dev/null 2>&1; then
+        echo "       ERROR: codex-code-mode-host failed its help check" >&2
+        return 1
+    fi
+    echo "       Installed codex-code-mode-host ${FETCHED_VERSION}"
+}
+
 # codex-acp, the ACP adapter for Codex. Its npm package is one self-contained
 # script, run by the pinned Node.js through the bin/codex-acp wrapper.
 install_codex_acp() {
@@ -348,13 +391,15 @@ get_codex_acp_version() {
 
 verify_installation() {
     local install_dir=$1
-    local executable
-    for executable in node/bin/node bin/codex bin/codex-acp; do
+    local executable flag
+    for executable in node/bin/node bin/codex bin/codex-acp bin/codex-code-mode-host; do
         [ -x "${install_dir}/${executable}" ] || {
             echo "       ERROR: ${executable} verification failed" >&2
             return 1
         }
-        "${install_dir}/${executable}" --version >/dev/null 2>&1 || {
+        flag=--version
+        [ "${executable}" = bin/codex-code-mode-host ] && flag=--help
+        "${install_dir}/${executable}" "${flag}" >/dev/null 2>&1 || {
             echo "       ERROR: ${executable} cannot execute" >&2
             return 1
         }

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Cloud Foundry v2 supply lifecycle: installs checksum-verified codex-acp, the
-# Node.js it runs on and the native codex it drives, and exports
-# CODEX_ACP_CLI_PATH and CODEX_PATH. Configuring Codex (provider, model, MCP
-# servers, skills, config.toml) is the application's job, through Spring AI ACP.
+# Node.js it runs on, the native codex it drives and codex's code-mode host,
+# and exports CODEX_ACP_CLI_PATH and CODEX_PATH. Configuring Codex (provider,
+# model, MCP servers, skills, config.toml) is the application's job, through
+# Spring AI ACP.
 
 set -euo pipefail
 
@@ -35,6 +36,9 @@ install_node "${DEPS_INDEX_DIR}" "${CACHE_DIR}" "${BP_DIR}"
 
 echo "       Installing Codex"
 install_codex "${DEPS_INDEX_DIR}" "${CACHE_DIR}" "${BP_DIR}"
+
+echo "       Installing Codex code-mode host"
+install_codex_code_mode_host "${DEPS_INDEX_DIR}" "${CACHE_DIR}" "${BP_DIR}"
 
 echo "       Installing codex-acp"
 install_codex_acp "${DEPS_INDEX_DIR}" "${CACHE_DIR}" "${BP_DIR}"

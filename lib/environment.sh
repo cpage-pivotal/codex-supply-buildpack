@@ -43,6 +43,7 @@ config:
   codex_version: ${codex_version}
   cli_path: ${deps_dir}/bin/codex-acp
   codex_path: ${deps_dir}/bin/codex
+  code_mode_host_path: ${deps_dir}/bin/codex-code-mode-host
 CONFIG
     chmod 0644 "${config_file}"
 }

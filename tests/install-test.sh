@@ -5,7 +5,7 @@ repo_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 source "${repo_dir}/tests/test-helper.sh"
 source "${repo_dir}/lib/installer.sh"
 
-# Stand-ins for the three archives. The fake node runs its script argument as a
+# Stand-ins for the four archives. The fake node runs its script argument as a
 # shell script, so a shell script can stand in for codex-acp's index.js. The
 # scripts' own variables expand when they run, not here.
 fake_node_root="${TEST_TMP}/node-root"
@@ -23,6 +23,14 @@ printf '%s\n' '#!/bin/sh' 'echo "codex-cli 9.9.9"' \
   > "${fake_codex_root}/codex-x86_64-unknown-linux-musl"
 chmod 0755 "${fake_codex_root}/codex-x86_64-unknown-linux-musl"
 
+# The real host has no --version, so the stand-in answers only --help.
+fake_host_root="${TEST_TMP}/host-root"
+mkdir -p "${fake_host_root}"
+# shellcheck disable=SC2016
+printf '%s\n' '#!/bin/sh' '[ "$1" = --help ] || exit 2' 'echo "Usage: codex-code-mode-host"' \
+  > "${fake_host_root}/codex-code-mode-host-x86_64-unknown-linux-musl"
+chmod 0755 "${fake_host_root}/codex-code-mode-host-x86_64-unknown-linux-musl"
+
 fake_acp_root="${TEST_TMP}/acp-root"
 mkdir -p "${fake_acp_root}/package/dist"
 # shellcheck disable=SC2016
@@ -34,35 +42,40 @@ printf '%s\n' 'Apache-2.0' > "${fake_acp_root}/package/LICENSE"
 # A buildpack directory whose manifest pins the given archive roots, bundled the
 # way the cached release bundles the real archives.
 fake_buildpack() {
-  local bp_dir=$1 node_root=$2 codex_root=$3 acp_root=$4
+  local bp_dir=$1 node_root=$2 codex_root=$3 acp_root=$4 host_root=${5:-${fake_host_root}}
+  local host_version=${6:-9.9.9}
   local dependency root
   local shas=()
 
   mkdir -p "${bp_dir}/config" "${bp_dir}/dependencies" "${bp_dir}/lib"
   cp "${repo_dir}/lib/codex-acp-wrapper.sh" "${bp_dir}/lib/"
-  for dependency in node codex codex-acp; do
+  for dependency in node codex codex-acp codex-code-mode-host; do
     case "${dependency}" in
       node) root=${node_root} ;;
       codex) root=${codex_root} ;;
       codex-acp) root=${acp_root} ;;
+      codex-code-mode-host) root=${host_root} ;;
     esac
     (cd "${root}" && tar czf "${bp_dir}/dependencies/${dependency}-test.tar.gz" -- *)
     shas+=("$(sha256_file "${bp_dir}/dependencies/${dependency}-test.tar.gz")")
   done
-  jq -n --arg node "${shas[0]}" --arg codex "${shas[1]}" --arg acp "${shas[2]}" '
-    def pinned($name; $sha): {
-      version: "9.9.9",
+  jq -n --arg node "${shas[0]}" --arg codex "${shas[1]}" --arg acp "${shas[2]}" \
+    --arg host "${shas[3]}" --arg host_version "${host_version}" '
+    def pinned($name; $sha; $version): {
+      version: $version,
       assets: {
         amd64: {filename: ($name + "-test.tar.gz"), url: "https://example.com/unused", sha256: $sha},
         arm64: {filename: ($name + "-test.tar.gz"), url: "https://example.com/unused", sha256: $sha}
       }
     };
+    def pinned($name; $sha): pinned($name; $sha; "9.9.9");
     {
       schemaVersion: 1,
       dependencies: {
         node: pinned("node"; $node),
         codex: pinned("codex"; $codex),
-        "codex-acp": pinned("codex-acp"; $acp)
+        "codex-acp": pinned("codex-acp"; $acp),
+        "codex-code-mode-host": pinned("codex-code-mode-host"; $host; $host_version)
       }
     }' > "${bp_dir}/config/dependencies.json"
 }
@@ -71,6 +84,7 @@ install_all() {
   local install_dir=$1 bp_dir=$2
   install_node "${install_dir}" "${TEST_TMP}/cache" "${bp_dir}" \
     && install_codex "${install_dir}" "${TEST_TMP}/cache" "${bp_dir}" \
+    && install_codex_code_mode_host "${install_dir}" "${TEST_TMP}/cache" "${bp_dir}" \
     && install_codex_acp "${install_dir}" "${TEST_TMP}/cache" "${bp_dir}"
 }
 
@@ -81,6 +95,8 @@ install_all "${install_dir}" "${TEST_TMP}/bp" >/dev/null
 assert_eq "v9.9.9" "$("${install_dir}/node/bin/node" --version)"
 assert_eq "codex-cli 9.9.9" "$("${install_dir}/bin/codex" --version)"
 assert_eq "@agentclientprotocol/codex-acp 9.9.9" "$("${install_dir}/bin/codex-acp" --version)"
+# Codex looks for its code-mode host beside its own executable.
+assert_eq "Usage: codex-code-mode-host" "$("${install_dir}/bin/codex-code-mode-host" --help)"
 assert_eq "9.9.9" "${CODEX_RESOLVED_VERSION}"
 assert_eq "9.9.9" "${CODEX_ACP_RESOLVED_VERSION}"
 [ -f "${install_dir}/node/LICENSE" ] || fail "Node.js licence was not installed"
@@ -131,6 +147,25 @@ fake_buildpack "${TEST_TMP}/hollow-bp" "${fake_node_root}" "${fake_codex_root}" 
 if install_codex_acp "${TEST_TMP}/deps/4" "${TEST_TMP}/cache" "${TEST_TMP}/hollow-bp" \
     >/dev/null 2>&1; then
   fail "codex-acp archive without dist/index.js was installed"
+fi
+
+# A code-mode host from another Codex release is refused.
+fake_buildpack "${TEST_TMP}/skewed-bp" "${fake_node_root}" "${fake_codex_root}" \
+  "${fake_acp_root}" "${fake_host_root}" 9.9.8
+if CODEX_RESOLVED_VERSION=9.9.9 install_codex_code_mode_host "${TEST_TMP}/deps/5" \
+    "${TEST_TMP}/cache" "${TEST_TMP}/skewed-bp" >/dev/null 2>&1; then
+  fail "codex-code-mode-host of a different version than codex was installed"
+fi
+
+# As is a host archive with anything more than the binary.
+crowded_host="${TEST_TMP}/crowded-host"
+cp -R "${fake_host_root}" "${crowded_host}"
+printf '%s\n' 'extra' > "${crowded_host}/README"
+fake_buildpack "${TEST_TMP}/crowded-host-bp" "${fake_node_root}" "${fake_codex_root}" \
+  "${fake_acp_root}" "${crowded_host}"
+if install_codex_code_mode_host "${TEST_TMP}/deps/6" "${TEST_TMP}/cache" \
+    "${TEST_TMP}/crowded-host-bp" >/dev/null 2>&1; then
+  fail "codex-code-mode-host archive with unexpected contents was installed"
 fi
 
 echo "install-test: PASS"

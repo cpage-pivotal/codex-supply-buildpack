@@ -29,7 +29,7 @@ mkdir -p "${stage_dir}/buildpack"
   cp -R bin config dependencies lib VERSION LICENSE SECURITY.md README.md \
     "${stage_dir}/buildpack/"
 )
-for dependency in codex codex-acp node jq; do
+for dependency in codex codex-code-mode-host codex-acp node jq; do
   filename=$(dependency_value "${repo_dir}/config/dependencies.json" \
     "${dependency}" "${arch}" filename)
   expected=$(dependency_value "${repo_dir}/config/dependencies.json" \
