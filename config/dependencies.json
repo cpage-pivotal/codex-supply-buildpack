@@ -2,33 +2,33 @@
   "schemaVersion": 1,
   "dependencies": {
     "codex-acp": {
-      "version": "2.0.1",
+      "version": "2.1.1",
       "failOnUpdate": true,
       "license": "Apache-2.0",
-      "purl": "pkg:npm/%40agentclientprotocol/codex-acp@2.0.1",
+      "purl": "pkg:npm/%40agentclientprotocol/codex-acp@2.1.1",
       "source": "https://github.com/agentclientprotocol/codex-acp",
-      "sourceCommit": "7a8e00fe46b299264f5ebe9f250288636f1485cc",
+      "sourceCommit": "68d7d2d5ddfc0ed5746f9f6130892dda685e65dd",
       "codexRange": "^0.159.1",
       "assets": {
         "amd64": {
-          "filename": "codex-acp-2.0.1.tgz",
-          "url": "https://registry.npmjs.org/@agentclientprotocol/codex-acp/-/codex-acp-2.0.1.tgz",
-          "sha256": "e59aa7c9c04bdda35f0194f2ea71cd256318b8c8f907a547787bbd0a2390b9dc"
+          "filename": "codex-acp-2.1.1.tgz",
+          "url": "https://registry.npmjs.org/@agentclientprotocol/codex-acp/-/codex-acp-2.1.1.tgz",
+          "sha256": "9da0d580518d006d257609a4b64b7c5bd96a7f36f2d86db5c8f2cb9385de5872"
         },
         "arm64": {
-          "filename": "codex-acp-2.0.1.tgz",
-          "url": "https://registry.npmjs.org/@agentclientprotocol/codex-acp/-/codex-acp-2.0.1.tgz",
-          "sha256": "e59aa7c9c04bdda35f0194f2ea71cd256318b8c8f907a547787bbd0a2390b9dc"
+          "filename": "codex-acp-2.1.1.tgz",
+          "url": "https://registry.npmjs.org/@agentclientprotocol/codex-acp/-/codex-acp-2.1.1.tgz",
+          "sha256": "9da0d580518d006d257609a4b64b7c5bd96a7f36f2d86db5c8f2cb9385de5872"
         }
       }
     },
     "codex": {
-      "version": "0.159.1",
+      "version": "0.159.3",
       "failOnUpdate": false,
       "license": "Apache-2.0",
-      "purl": "pkg:github/openai/codex@rust-v0.159.1",
+      "purl": "pkg:github/openai/codex@rust-v0.159.3",
       "source": "https://github.com/openai/codex",
-      "sourceCommit": "8e68a98ef03cdde76d2e6800791ebdf1b3b95b24",
+      "sourceCommit": "01fc69f4026735edfdf6789820549727a4867b11",
       "security": {
         "minimumSecureVersion": "0.39.0",
         "fixedAdvisories": [
@@ -47,33 +47,33 @@
       "assets": {
         "amd64": {
           "filename": "codex-x86_64-unknown-linux-musl.tar.gz",
-          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.1/codex-x86_64-unknown-linux-musl.tar.gz",
-          "sha256": "47af8bb41b00eaf3a809c27d5f8357740910373a6a5dedb54f9ee748cedd6851"
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.3/codex-x86_64-unknown-linux-musl.tar.gz",
+          "sha256": "b48ca1b2d6b1bf42b944e02c3d937c898e24651916684cdc35fdedf31b291bcb"
         },
         "arm64": {
           "filename": "codex-aarch64-unknown-linux-musl.tar.gz",
-          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.1/codex-aarch64-unknown-linux-musl.tar.gz",
-          "sha256": "84e7be7c58ef9b6e1609d9c5f14a8e92506fbf276dc35c76a8f121e83620af95"
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.3/codex-aarch64-unknown-linux-musl.tar.gz",
+          "sha256": "cd5f307b3fcd6080773e684b86c3114a67d4f1c61dc447be09876b552eb4bea7"
         }
       }
     },
     "codex-code-mode-host": {
-      "version": "0.159.1",
+      "version": "0.159.3",
       "failOnUpdate": false,
       "license": "Apache-2.0",
-      "purl": "pkg:github/openai/codex@rust-v0.159.1#codex-rs/code-mode-host",
+      "purl": "pkg:github/openai/codex@rust-v0.159.3#codex-rs/code-mode-host",
       "source": "https://github.com/openai/codex",
-      "sourceCommit": "8e68a98ef03cdde76d2e6800791ebdf1b3b95b24",
+      "sourceCommit": "01fc69f4026735edfdf6789820549727a4867b11",
       "assets": {
         "amd64": {
           "filename": "codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz",
-          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.1/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz",
-          "sha256": "3b8644bdb39dbeed1ab55293672dd0fce1f3b8fbdd9175308d7468b4af0d54bc"
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.3/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz",
+          "sha256": "0f58dd9848c717382e5223e39c1fc8f43a8f4a8cbe20d7af0c0dee0ef3abd438"
         },
         "arm64": {
           "filename": "codex-code-mode-host-aarch64-unknown-linux-musl.tar.gz",
-          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.1/codex-code-mode-host-aarch64-unknown-linux-musl.tar.gz",
-          "sha256": "aa96b7ecdc69e6889e9a74565f5344b68783c83da4fcc3dc9daaac28fd8e9b08"
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.159.3/codex-code-mode-host-aarch64-unknown-linux-musl.tar.gz",
+          "sha256": "7cbb47c472c2dc115abfeebf52ff11bf66eb364bf8f5d14659742615919b8e6f"
         }
       }
     },
