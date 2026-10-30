@@ -2,33 +2,33 @@
   "schemaVersion": 1,
   "dependencies": {
     "codex-acp": {
-      "version": "2.2.2",
+      "version": "2.5.0",
       "failOnUpdate": true,
       "license": "Apache-2.0",
-      "purl": "pkg:npm/%40agentclientprotocol/codex-acp@2.2.2",
+      "purl": "pkg:npm/%40agentclientprotocol/codex-acp@2.5.0",
       "source": "https://github.com/agentclientprotocol/codex-acp",
-      "sourceCommit": "202e66e63343ec4f5a5e35ab590251d813d129ca",
-      "codexRange": "^0.160.1",
+      "sourceCommit": "34e08970aa324a2be985f5080674d5aa91d7666f",
+      "codexRange": "^0.165.0",
       "assets": {
         "amd64": {
-          "filename": "codex-acp-2.2.2.tgz",
-          "url": "https://registry.npmjs.org/@agentclientprotocol/codex-acp/-/codex-acp-2.2.2.tgz",
-          "sha256": "5f4fa33c94959c928db11687376a050e9a5e7b72dba51963b571fa55ddb86168"
+          "filename": "codex-acp-2.5.0.tgz",
+          "url": "https://registry.npmjs.org/@agentclientprotocol/codex-acp/-/codex-acp-2.5.0.tgz",
+          "sha256": "9206b1543a9e997e7ffcf1be3d5dab60dc3d43b672f1de6dd30ff2a7ca1c280e"
         },
         "arm64": {
-          "filename": "codex-acp-2.2.2.tgz",
-          "url": "https://registry.npmjs.org/@agentclientprotocol/codex-acp/-/codex-acp-2.2.2.tgz",
-          "sha256": "5f4fa33c94959c928db11687376a050e9a5e7b72dba51963b571fa55ddb86168"
+          "filename": "codex-acp-2.5.0.tgz",
+          "url": "https://registry.npmjs.org/@agentclientprotocol/codex-acp/-/codex-acp-2.5.0.tgz",
+          "sha256": "9206b1543a9e997e7ffcf1be3d5dab60dc3d43b672f1de6dd30ff2a7ca1c280e"
         }
       }
     },
     "codex": {
-      "version": "0.160.1",
+      "version": "0.165.0",
       "failOnUpdate": false,
       "license": "Apache-2.0",
-      "purl": "pkg:github/openai/codex@rust-v0.160.1",
+      "purl": "pkg:github/openai/codex@rust-v0.165.0",
       "source": "https://github.com/openai/codex",
-      "sourceCommit": "d27764b82f7118f674371e6d6e76271d9d606edb",
+      "sourceCommit": "360319d8dee62d87e2d59fc0c21805d79519cfed",
       "security": {
         "minimumSecureVersion": "0.39.0",
         "fixedAdvisories": [
@@ -47,53 +47,53 @@
       "assets": {
         "amd64": {
           "filename": "codex-x86_64-unknown-linux-musl.tar.gz",
-          "url": "https://github.com/openai/codex/releases/download/rust-v0.160.1/codex-x86_64-unknown-linux-musl.tar.gz",
-          "sha256": "9226581be592d18f7e7f740a352fdb63aa61e45e39f7eb9b09d3888c84bba33f"
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.165.0/codex-x86_64-unknown-linux-musl.tar.gz",
+          "sha256": "be635d3486a5bd060d0fff582ae6d30160280c31344dd85719707fa920e187f0"
         },
         "arm64": {
           "filename": "codex-aarch64-unknown-linux-musl.tar.gz",
-          "url": "https://github.com/openai/codex/releases/download/rust-v0.160.1/codex-aarch64-unknown-linux-musl.tar.gz",
-          "sha256": "f54dc5852042445bf41da3aa31156f3cb02f52c5a1a04074de73dc5598f7e1f7"
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.165.0/codex-aarch64-unknown-linux-musl.tar.gz",
+          "sha256": "6522e056d0be7f531da915c9a81ae05bc70811b782542499cc0a9776d3abf5d3"
         }
       }
     },
     "codex-code-mode-host": {
-      "version": "0.160.1",
+      "version": "0.165.0",
       "failOnUpdate": false,
       "license": "Apache-2.0",
-      "purl": "pkg:github/openai/codex@rust-v0.160.1#codex-rs/code-mode-host",
+      "purl": "pkg:github/openai/codex@rust-v0.165.0#codex-rs/code-mode-host",
       "source": "https://github.com/openai/codex",
-      "sourceCommit": "d27764b82f7118f674371e6d6e76271d9d606edb",
+      "sourceCommit": "360319d8dee62d87e2d59fc0c21805d79519cfed",
       "assets": {
         "amd64": {
           "filename": "codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz",
-          "url": "https://github.com/openai/codex/releases/download/rust-v0.160.1/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz",
-          "sha256": "8a69207d97545ac753b6585974e1e67a4c51ae5deacf06517db512bb25e0e3c2"
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.165.0/codex-code-mode-host-x86_64-unknown-linux-musl.tar.gz",
+          "sha256": "9577b09b2a546eeb3da8a09807de6d58fbaa207755256390113772ea4f05235e"
         },
         "arm64": {
           "filename": "codex-code-mode-host-aarch64-unknown-linux-musl.tar.gz",
-          "url": "https://github.com/openai/codex/releases/download/rust-v0.160.1/codex-code-mode-host-aarch64-unknown-linux-musl.tar.gz",
-          "sha256": "e5e027e6689efda2e3570aa600179f0ebb18632803350e152ed6c9b97dcf9741"
+          "url": "https://github.com/openai/codex/releases/download/rust-v0.165.0/codex-code-mode-host-aarch64-unknown-linux-musl.tar.gz",
+          "sha256": "400956c325a2118768029f235958b7d2fd2ea4e59c5466d336fb4fb7f0e94b61"
         }
       }
     },
     "node": {
-      "version": "24.22.0",
+      "version": "24.22.2",
       "failOnUpdate": true,
       "license": "MIT",
-      "purl": "pkg:github/nodejs/node@v24.22.0",
+      "purl": "pkg:github/nodejs/node@v24.22.2",
       "source": "https://github.com/nodejs/node",
-      "sourceCommit": "f14cd3aa7bf9ca8df2cc5b8bb14beb0f335b1d93",
+      "sourceCommit": "f7f273a9bb6445f6f7fb6349105e7532972045fb",
       "assets": {
         "amd64": {
-          "filename": "node-v24.22.0-linux-x64.tar.gz",
-          "url": "https://nodejs.org/dist/v24.22.0/node-v24.22.0-linux-x64.tar.gz",
-          "sha256": "28ea0a438de9a13bd7891fd758eee6c7819ee8af5442dfd8d45bd65e56d4228c"
+          "filename": "node-v24.22.2-linux-x64.tar.gz",
+          "url": "https://nodejs.org/dist/v24.22.2/node-v24.22.2-linux-x64.tar.gz",
+          "sha256": "361718c444e49af2ca5a110c83ba6a8901143f23ab285ebbef0341f391f482a9"
         },
         "arm64": {
-          "filename": "node-v24.22.0-linux-arm64.tar.gz",
-          "url": "https://nodejs.org/dist/v24.22.0/node-v24.22.0-linux-arm64.tar.gz",
-          "sha256": "b7e7991d5407815adfa74a2a9cd4db683552c8ce32ff4a295c22e972849c3f5d"
+          "filename": "node-v24.22.2-linux-arm64.tar.gz",
+          "url": "https://nodejs.org/dist/v24.22.2/node-v24.22.2-linux-arm64.tar.gz",
+          "sha256": "95c264150aceb7f3437a29fd6984924f5f8d1511ea3cbd6c508b83f6c555dae2"
         }
       }
     },

@@ -8,7 +8,7 @@ dependency versions it pins.
 | Component | Supported |
 | --- | --- |
 | Buildpack 1.0.x | Yes |
-| codex-acp 2.2.x, Codex 0.160.x (with its code-mode host) and Node.js 24.x bundled here | Yes |
+| codex-acp 2.5.x, Codex 0.165.x (with its code-mode host) and Node.js 24.x bundled here | Yes |
 | Earlier versions | No |
 
 ## Reporting a vulnerability
