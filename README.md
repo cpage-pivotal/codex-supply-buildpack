@@ -16,9 +16,9 @@ skills, and the `config.toml` it writes under `CODEX_HOME`. This buildpack
 therefore writes no Codex configuration and reads no service bindings.
 
 - Buildpack: **1.0.0**
-- codex-acp: **2.5.0**
-- Codex: **0.165.0**, and its code-mode host from the same release
-- Node.js: **24.22.2** (LTS, runs codex-acp)
+- codex-acp: **2.6.0**
+- Codex: **0.166.0**, and its code-mode host from the same release
+- Node.js: **24.22.3** (LTS, runs codex-acp)
 - Architectures: Linux amd64 and arm64
 
 ## Usage
